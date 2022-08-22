@@ -19,7 +19,7 @@ class CtrlUnit(val node: TLAdapterNode)(implicit p: Parameters)
     concurrency = 1,
     beatBytes = cacheParams.ctrl.get.beatBytes
   )
-  val device = new SimpleDevice("L3CacheCtrl", Seq("xiangshan,cache_ctrl"))
+  val device = new SimpleDevice("L3CacheCtrl", Seq("yinxing,cache_ctrl"))
   val intnode = IntSourceNode(IntSourcePortSimple(resources = device.int))
   val num_cores = cacheParams.ctrl.get.numCores
   val core_reset_nodes = (0 until num_cores) map(_ => BundleBridgeSource(() => Bool()))

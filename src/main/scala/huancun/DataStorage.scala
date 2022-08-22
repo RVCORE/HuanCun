@@ -249,7 +249,7 @@ class DataStorage(implicit p: Parameters) extends HuanCunModule {
   val debug_stack_used = PopCount(bank_en.grouped(stackSize).toList.map(seq => Cat(seq).orR))
 
   for (i <- 1 to nrStacks) {
-    XSPerfAccumulate(cacheParams, s"DS_${i}_stacks_used", debug_stack_used === i.U)
+    RVCOREPerfAccumulate(cacheParams, s"DS_${i}_stacks_used", debug_stack_used === i.U)
   }
 
 }

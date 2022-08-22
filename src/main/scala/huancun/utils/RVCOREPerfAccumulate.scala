@@ -17,7 +17,7 @@ trait HasRegularPerfName {
   }
 }
 
-object XSPerfAccumulate extends HasRegularPerfName {
+object RVCOREPerfAccumulate extends HasRegularPerfName {
   def apply(params: HCCacheParameters, perfName: String, perfCnt: UInt) = {
     judgeName(perfName)
     if (params.enablePerf) {
@@ -25,21 +25,21 @@ object XSPerfAccumulate extends HasRegularPerfName {
       val perfClean = WireInit(false.B)
       val perfDump = WireInit(false.B)
       BoringUtils.addSink(logTimestamp, "logTimestamp")
-      BoringUtils.addSink(perfClean, "XSPERF_CLEAN")
-      BoringUtils.addSink(perfDump, "XSPERF_DUMP")
+      BoringUtils.addSink(perfClean, "RVCOREPERF_CLEAN")
+      BoringUtils.addSink(perfDump, "RVCOREPERF_DUMP")
 
       val counter = RegInit(0.U(64.W))
       val next_counter = counter + perfCnt
       counter := Mux(perfClean, 0.U, next_counter)
 
       when(perfDump) {
-        XSPerfPrint(p"$perfName, $next_counter\n")
+        RVCOREPerfPrint(p"$perfName, $next_counter\n")
       }
     }
   }
 }
 
-object XSPerfHistogram extends HasRegularPerfName {
+object RVCOREPerfHistogram extends HasRegularPerfName {
   // instead of simply accumulating counters
   // this function draws a histogram
   def apply(
@@ -57,8 +57,8 @@ object XSPerfHistogram extends HasRegularPerfName {
       val perfClean = WireInit(false.B)
       val perfDump = WireInit(false.B)
       BoringUtils.addSink(logTimestamp, "logTimestamp")
-      BoringUtils.addSink(perfClean, "XSPERF_CLEAN")
-      BoringUtils.addSink(perfDump, "XSPERF_DUMP")
+      BoringUtils.addSink(perfClean, "RVCOREPERF_CLEAN")
+      BoringUtils.addSink(perfDump, "RVCOREPERF_DUMP")
 
       // drop each perfCnt value into a bin
       val nBins = (stop - start) / step
@@ -85,14 +85,14 @@ object XSPerfHistogram extends HasRegularPerfName {
         }
 
         when(perfDump) {
-          XSPerfPrint(p"${perfName}_${binRangeStart}_${binRangeStop}, $counter\n")
+          RVCOREPerfPrint(p"${perfName}_${binRangeStart}_${binRangeStop}, $counter\n")
         }
       }
     }
   }
 }
 
-object XSPerfMax extends HasRegularPerfName {
+object RVCOREPerfMax extends HasRegularPerfName {
   def apply(params: HCCacheParameters, perfName: String, perfCnt: UInt, enable: Bool) = {
     judgeName(perfName)
     if (params.enablePerf) {
@@ -100,15 +100,15 @@ object XSPerfMax extends HasRegularPerfName {
       val perfClean = WireInit(false.B)
       val perfDump = WireInit(false.B)
       BoringUtils.addSink(logTimestamp, "logTimestamp")
-      BoringUtils.addSink(perfClean, "XSPERF_CLEAN")
-      BoringUtils.addSink(perfDump, "XSPERF_DUMP")
+      BoringUtils.addSink(perfClean, "RVCOREPERF_CLEAN")
+      BoringUtils.addSink(perfDump, "RVCOREPERF_DUMP")
 
       val max = RegInit(0.U(64.W))
       val next_max = Mux(enable && (perfCnt > max), perfCnt, max)
       max := Mux(perfClean, 0.U, next_max)
 
       when(perfDump) {
-        XSPerfPrint(p"${perfName}_max, $next_max\n")
+        RVCOREPerfPrint(p"${perfName}_max, $next_max\n")
       }
     }
   }
@@ -126,7 +126,7 @@ object TransactionLatencyCounter {
   }
 }
 
-object XSPerfPrint {
+object RVCOREPerfPrint {
   def apply(fmt: String, data: Bits*): Any =
     apply(Printable.pack(fmt, data: _*))
 

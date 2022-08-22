@@ -3,7 +3,7 @@ package huancun
 import chipsalliance.rocketchip.config.Parameters
 import chisel3._
 import chisel3.util._
-import huancun.utils.{FastArbiter, XSPerfAccumulate}
+import huancun.utils.{FastArbiter, RVCOREPerfAccumulate}
 
 class RequestBuffer(flow: Boolean = true, entries: Int = 16)(implicit p: Parameters) extends HuanCunModule {
 
@@ -91,18 +91,18 @@ class RequestBuffer(flow: Boolean = true, entries: Int = 16)(implicit p: Paramet
     }
   }
 
-  XSPerfAccumulate(cacheParams, "req_buffer_merge", dup && !full)
+  RVCOREPerfAccumulate(cacheParams, "req_buffer_merge", dup && !full)
   if(flow){
-    XSPerfAccumulate(cacheParams, "req_buffer_flow", no_ready_entry && io.in.fire())
+    RVCOREPerfAccumulate(cacheParams, "req_buffer_flow", no_ready_entry && io.in.fire())
   }
-  XSPerfAccumulate(cacheParams, "req_buffer_alloc", alloc)
-  XSPerfAccumulate(cacheParams, "req_buffer_full", full)
+  RVCOREPerfAccumulate(cacheParams, "req_buffer_alloc", alloc)
+  RVCOREPerfAccumulate(cacheParams, "req_buffer_full", full)
   for(i <- 0 until entries){
     val update = PopCount(valids) === i.U
-    XSPerfAccumulate(cacheParams, s"req_buffer_util_$i", update)
+    RVCOREPerfAccumulate(cacheParams, s"req_buffer_util_$i", update)
   }
-  XSPerfAccumulate(cacheParams, "recv_prefetch", io.in.fire() && io.in.bits.isPrefetch.getOrElse(false.B))
-  XSPerfAccumulate(cacheParams, "recv_normal", io.in.fire() && !io.in.bits.isPrefetch.getOrElse(false.B))
+  RVCOREPerfAccumulate(cacheParams, "recv_prefetch", io.in.fire() && io.in.bits.isPrefetch.getOrElse(false.B))
+  RVCOREPerfAccumulate(cacheParams, "recv_normal", io.in.fire() && !io.in.bits.isPrefetch.getOrElse(false.B))
   val perfinfo = IO(Output(Vec(numPCntHcReqb, (UInt(6.W)))))
   val perfEvents = Seq(
     ("req_buffer_merge          ", dup && !full                                             ),

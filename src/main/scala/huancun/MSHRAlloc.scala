@@ -186,8 +186,8 @@ class MSHRAlloc(implicit p: Parameters) extends HuanCunModule {
       }
       val cntEnable =
         !io.status(i).valid && cnt =/= 0.U && cntStart && cnt < 5000.U // Ignore huge cnt during L3 dir reset
-      XSPerfHistogram(cacheParams, "mshr_latency_" + Integer.toString(i, 10), cnt, cntEnable, 0, 300, 10)
-      XSPerfMax(cacheParams, "mshr_latency", cnt, cntEnable)
+      RVCOREPerfHistogram(cacheParams, "mshr_latency_" + Integer.toString(i, 10), cnt, cntEnable, 0, 300, 10)
+      RVCOREPerfMax(cacheParams, "mshr_latency", cnt, cntEnable)
     }
   }
 
@@ -196,13 +196,13 @@ class MSHRAlloc(implicit p: Parameters) extends HuanCunModule {
       (s.bits.set(block_granularity - 1, 0) === io.a_req.bits.set(block_granularity - 1, 0))
   ))
 
-  XSPerfAccumulate(cacheParams, "nrWorkingABCmshr", PopCount(io.status.init.init.map(_.valid)))
-  XSPerfAccumulate(cacheParams, "nrWorkingBmshr", io.status.take(mshrs+1).last.valid)
-  XSPerfAccumulate(cacheParams, "nrWorkingCmshr", io.status.last.valid)
-  XSPerfAccumulate(cacheParams, "conflictA", io.a_req.valid && conflict_a)
-  XSPerfAccumulate(cacheParams, "conflictByPrefetch", io.a_req.valid && Cat(pretch_block_vec).orR())
-  XSPerfAccumulate(cacheParams, "conflictB", io.b_req.valid && conflict_b)
-  XSPerfAccumulate(cacheParams, "conflictC", io.c_req.valid && conflict_c)
+  RVCOREPerfAccumulate(cacheParams, "nrWorkingABCmshr", PopCount(io.status.init.init.map(_.valid)))
+  RVCOREPerfAccumulate(cacheParams, "nrWorkingBmshr", io.status.take(mshrs+1).last.valid)
+  RVCOREPerfAccumulate(cacheParams, "nrWorkingCmshr", io.status.last.valid)
+  RVCOREPerfAccumulate(cacheParams, "conflictA", io.a_req.valid && conflict_a)
+  RVCOREPerfAccumulate(cacheParams, "conflictByPrefetch", io.a_req.valid && Cat(pretch_block_vec).orR())
+  RVCOREPerfAccumulate(cacheParams, "conflictB", io.b_req.valid && conflict_b)
+  RVCOREPerfAccumulate(cacheParams, "conflictC", io.c_req.valid && conflict_c)
   //val perfinfo = IO(new Bundle(){
   //  val perfEvents = Output(new PerfEventsBundle(numPCntHcMSHR))
   //})
