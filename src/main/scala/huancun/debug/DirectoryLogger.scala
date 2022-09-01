@@ -61,7 +61,7 @@ class DirLogWriter(prefix: String)
       |    input clock,
       |    input reset
       |);
-      |    parameter string prefix = "undefined";
+      |    parameter string prefix;
       |
       |    always @(posedge clock) begin
       |        if(wen && !reset) begin
@@ -74,7 +74,7 @@ class DirLogWriter(prefix: String)
       |endmodule
       |""".stripMargin
 
-  setInline("DirLogWriter.v", verilog)
+  setInline("DirLogWriter", verilog)
 }
 
 object DirectoryLogger {

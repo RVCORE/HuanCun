@@ -80,7 +80,7 @@ class TLLogWriter(prefix: String) extends BlackBox(Map("prefix" -> StringParam(p
       |    input clock,
       |    input reset
       |);
-      |    parameter string prefix = "undefined";
+      |    parameter string prefix;
       |
       |    always @(posedge clock) begin
       |        if(wen && !reset) begin
@@ -94,7 +94,7 @@ class TLLogWriter(prefix: String) extends BlackBox(Map("prefix" -> StringParam(p
       |endmodule
       |""".stripMargin
 
-  setInline("TLLogWriter.v", verilog)
+  setInline("TLLogWriter", verilog)
 
 }
 

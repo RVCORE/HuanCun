@@ -31,7 +31,7 @@ module TLLogWriter(
     input clock,
     input reset
 );
-    parameter string prefix = "undefined";
+    parameter string prefix;
 
     always @(posedge clock) begin
         if(wen && !reset) begin
